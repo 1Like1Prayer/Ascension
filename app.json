@@ -37,6 +37,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "676dc59e-f88b-41f3-9161-40ea3792d004"
+      }
+    },
+    "owner": "tomatoexpo"
   }
 }
