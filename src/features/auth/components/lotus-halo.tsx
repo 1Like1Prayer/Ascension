@@ -1,8 +1,14 @@
-import { useEffect, useRef } from 'react';
-import { AccessibilityInfo, Animated, Easing, StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from "react";
+import {
+  AccessibilityInfo,
+  Animated,
+  Easing,
+  StyleSheet,
+  View,
+} from "react-native";
 
-import Lotus from '@/assets/lotus-svgrepo-com.svg';
-import { palette } from '@/theme';
+import Lotus from "@/assets/lotus-svgrepo-com.svg";
+import { palette } from "@/theme";
 
 /**
  * The bloom is drawn as line art, so a hairline gold reads as a watermark rather
@@ -23,7 +29,7 @@ const CENTER_Y = 150;
  * which this is not: it is ambient motion on a screen seen once a session. A
  * breath a user can consciously follow has to be slower than a gesture.
  */
-const BREATH_MS = 4200;
+const BREATH_MS = 1500;
 
 /** Amplitude. The lotus sits behind the wordmark; it must never pull focus. */
 const SCALE_TO = 1.025;
@@ -40,8 +46,18 @@ export function LotusHalo() {
     const ease = Easing.inOut(Easing.ease);
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(breath, { toValue: 1, duration: BREATH_MS, easing: ease, useNativeDriver: true }),
-        Animated.timing(breath, { toValue: 0, duration: BREATH_MS, easing: ease, useNativeDriver: true }),
+        Animated.timing(breath, {
+          toValue: 1,
+          duration: BREATH_MS,
+          easing: ease,
+          useNativeDriver: true,
+        }),
+        Animated.timing(breath, {
+          toValue: 0,
+          duration: BREATH_MS,
+          easing: ease,
+          useNativeDriver: true,
+        }),
       ]),
     );
 
@@ -59,7 +75,10 @@ export function LotusHalo() {
 
     AccessibilityInfo.isReduceMotionEnabled().then(apply);
     // Honour the setting when it changes, not only as it was at mount.
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', apply);
+    const subscription = AccessibilityInfo.addEventListener(
+      "reduceMotionChanged",
+      apply,
+    );
 
     return () => {
       cancelled = true;
@@ -68,12 +87,20 @@ export function LotusHalo() {
     };
   }, [breath]);
 
-  const scale = breath.interpolate({ inputRange: [0, 1], outputRange: [1, SCALE_TO] });
-  const opacity = breath.interpolate({ inputRange: [0, 1], outputRange: [DIM_TO, 1] });
+  const scale = breath.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, SCALE_TO],
+  });
+  const opacity = breath.interpolate({
+    inputRange: [0, 1],
+    outputRange: [DIM_TO, 1],
+  });
 
   return (
     <View pointerEvents="none" style={styles.layer}>
-      <Animated.View style={[styles.bloom, { opacity, transform: [{ scale }] }]}>
+      <Animated.View
+        style={[styles.bloom, { opacity, transform: [{ scale }] }]}
+      >
         {/* The asset paints with `currentColor`, so `color` tints it. */}
         <Lotus width={SIZE} height={SIZE} color={palette.goldRule} />
       </Animated.View>
@@ -82,6 +109,13 @@ export function LotusHalo() {
 }
 
 const styles = StyleSheet.create({
-  layer: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center' },
-  bloom: { position: 'absolute', top: CENTER_Y - SIZE / 2 },
+  layer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+  },
+  bloom: { position: "absolute", top: CENTER_Y - SIZE / 2 },
 });

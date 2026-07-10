@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { copy } from '@/i18n';
+import { shared } from '@/copies';
 import { components, effects, fonts, palette, radii, spacing, typeScale } from '@/theme';
 
 import { LotusHalo } from './lotus-halo';
@@ -11,7 +11,7 @@ export function GateMark({ title, eyebrow }: { title: string; eyebrow: string })
     <View style={styles.mark}>
       <LotusHalo />
       <View style={styles.seal}>
-        <Text style={styles.glyph}>{copy.brand.glyph}</Text>
+        <Text style={styles.glyph}>{shared.brand.glyph}</Text>
       </View>
       <Text style={styles.title}>{title}</Text>
       <Text style={typeScale.eyebrow}>{eyebrow}</Text>

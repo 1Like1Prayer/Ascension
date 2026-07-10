@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Field } from "@/components/field";
 import { LabelledDivider } from "@/components/labelled-divider";
 import { PressableScale } from "@/components/pressable-scale";
-import { copy } from "@/i18n";
+import { login, shared } from "@/copies";
 import { components, fonts, palette, spacing, typeScale } from "@/theme";
 
 import { GateMark } from "./components/gate-mark";
@@ -40,19 +40,19 @@ export function LoginScreen() {
           style={styles.fill}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <GateMark title={copy.brand.name} eyebrow={copy.auth.eyebrow} />
+          <GateMark title={shared.brand.name} eyebrow={login.eyebrow} />
 
           <View style={styles.form}>
             <View style={styles.fields}>
               <Field
-                label={copy.auth.fields.name}
+                label={login.fields.name}
                 value={credentials.name}
                 onChangeText={setName}
                 textContentType="username"
                 returnKeyType="next"
               />
               <Field
-                label={copy.auth.fields.mantra}
+                label={login.fields.mantra}
                 value={credentials.mantra}
                 onChangeText={setMantra}
                 secureTextEntry={!revealed}
@@ -67,7 +67,7 @@ export function LoginScreen() {
                     hitSlop={10}
                   >
                     <Text style={styles.reveal}>
-                      {revealed ? copy.auth.reveal.hide : copy.auth.reveal.show}
+                      {revealed ? login.reveal.hide : login.reveal.show}
                     </Text>
                   </PressableScale>
                 }
@@ -84,20 +84,20 @@ export function LoginScreen() {
                 !canSubmit && styles.submitIdle,
               ]}
             >
-              <Text style={components.buttonPrimaryText}>{copy.auth.submit}</Text>
+              <Text style={components.buttonPrimaryText}>{login.submit}</Text>
             </PressableScale>
 
             <Text style={styles.helper}>
-              {copy.auth.forgot.prompt}{" "}
-              <Text style={styles.link}>{copy.auth.forgot.action}</Text>
+              {login.forgot.prompt}{" "}
+              <Text style={styles.link}>{login.forgot.action}</Text>
             </Text>
 
-            <LabelledDivider label={copy.auth.providersDivider} style={styles.divider} />
+            <LabelledDivider label={login.providersDivider} style={styles.divider} />
             <ProviderButtons onSelect={selectProvider} />
 
             <Text style={styles.footer}>
-              {copy.auth.register.prompt}{" "}
-              <Text style={styles.link}>{copy.auth.register.action}</Text>
+              {login.register.prompt}{" "}
+              <Text style={styles.link}>{login.register.action}</Text>
             </Text>
           </View>
         </KeyboardAvoidingView>
