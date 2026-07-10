@@ -1,25 +1,30 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { PressableScale } from '@/components/pressable-scale';
+import { copy } from '@/i18n';
 import { components, fonts, palette, spacing } from '@/theme';
 
-export const PROVIDERS = ['Apple', 'Google'] as const;
+/** Identifiers, not labels. Each provider's label lives in `copy.auth.providers`. */
+export const PROVIDERS = ['apple', 'google'] as const;
 export type Provider = (typeof PROVIDERS)[number];
 
 /** "Or arrive by" — third-party sign-in. */
 export function ProviderButtons({ onSelect }: { onSelect: (provider: Provider) => void }) {
   return (
     <View style={styles.row}>
-      {PROVIDERS.map((provider) => (
-        <PressableScale
-          key={provider}
-          accessibilityRole="button"
-          accessibilityLabel={`Continue with ${provider}`}
-          onPress={() => onSelect(provider)}
-          style={[components.buttonGhost, styles.button]}>
-          <Text style={styles.label}>{provider}</Text>
-        </PressableScale>
-      ))}
+      {PROVIDERS.map((provider) => {
+        const label = copy.auth.providers[provider];
+        return (
+          <PressableScale
+            key={provider}
+            accessibilityRole="button"
+            accessibilityLabel={copy.auth.a11y.continueWith(label)}
+            onPress={() => onSelect(provider)}
+            style={[components.buttonGhost, styles.button]}>
+            <Text style={styles.label}>{label}</Text>
+          </PressableScale>
+        );
+      })}
     </View>
   );
 }

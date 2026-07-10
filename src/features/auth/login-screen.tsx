@@ -4,22 +4,30 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Field } from '@/components/field';
-import { LabelledDivider } from '@/components/labelled-divider';
-import { PressableScale } from '@/components/pressable-scale';
-import { components, fonts, palette, spacing, typeScale } from '@/theme';
+import { Field } from "@/components/field";
+import { LabelledDivider } from "@/components/labelled-divider";
+import { PressableScale } from "@/components/pressable-scale";
+import { copy } from "@/i18n";
+import { components, fonts, palette, spacing, typeScale } from "@/theme";
 
-import { GateMark } from './components/gate-mark';
-import { ProviderButtons, type Provider } from './components/provider-buttons';
-import { useLoginForm } from './hooks/use-login-form';
+import { GateMark } from "./components/gate-mark";
+import { ProviderButtons, type Provider } from "./components/provider-buttons";
+import { useLoginForm } from "./hooks/use-login-form";
 
 export function LoginScreen() {
   // TODO: pass an authenticate handler once a session layer exists.
-  const { credentials, setName, setMantra, revealed, toggleReveal, canSubmit, submit } =
-    useLoginForm();
+  const {
+    credentials,
+    setName,
+    setMantra,
+    revealed,
+    toggleReveal,
+    canSubmit,
+    submit,
+  } = useLoginForm();
 
   function selectProvider(_provider: Provider) {
     // TODO: federated sign-in.
@@ -27,23 +35,24 @@ export function LoginScreen() {
 
   return (
     <View style={components.screen}>
-      <SafeAreaView style={styles.fill} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.fill} edges={["top", "bottom"]}>
         <KeyboardAvoidingView
           style={styles.fill}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-          <GateMark title="Murim Ascension" eyebrow="The Gate of the Sect" />
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <GateMark title={copy.brand.name} eyebrow={copy.auth.eyebrow} />
 
           <View style={styles.form}>
             <View style={styles.fields}>
               <Field
-                label="DISCIPLE NAME"
+                label={copy.auth.fields.name}
                 value={credentials.name}
                 onChangeText={setName}
                 textContentType="username"
                 returnKeyType="next"
               />
               <Field
-                label="SECRET MANTRA"
+                label={copy.auth.fields.mantra}
                 value={credentials.mantra}
                 onChangeText={setMantra}
                 secureTextEntry={!revealed}
@@ -55,8 +64,11 @@ export function LoginScreen() {
                   <PressableScale
                     accessibilityRole="button"
                     onPress={toggleReveal}
-                    hitSlop={10}>
-                    <Text style={styles.reveal}>{revealed ? 'HIDE' : 'SHOW'}</Text>
+                    hitSlop={10}
+                  >
+                    <Text style={styles.reveal}>
+                      {revealed ? copy.auth.reveal.hide : copy.auth.reveal.show}
+                    </Text>
                   </PressableScale>
                 }
               />
@@ -70,19 +82,22 @@ export function LoginScreen() {
                 components.buttonPrimary,
                 styles.submit,
                 !canSubmit && styles.submitIdle,
-              ]}>
-              <Text style={components.buttonPrimaryText}>Enter the Sect</Text>
+              ]}
+            >
+              <Text style={components.buttonPrimaryText}>{copy.auth.submit}</Text>
             </PressableScale>
 
             <Text style={styles.helper}>
-              Forgot your mantra? <Text style={styles.link}>Consult the elders</Text>
+              {copy.auth.forgot.prompt}{" "}
+              <Text style={styles.link}>{copy.auth.forgot.action}</Text>
             </Text>
 
-            <LabelledDivider label="OR ARRIVE BY" style={styles.divider} />
+            <LabelledDivider label={copy.auth.providersDivider} style={styles.divider} />
             <ProviderButtons onSelect={selectProvider} />
 
             <Text style={styles.footer}>
-              No record in the annals? <Text style={styles.link}>Begin initiation</Text>
+              {copy.auth.register.prompt}{" "}
+              <Text style={styles.link}>{copy.auth.register.action}</Text>
             </Text>
           </View>
         </KeyboardAvoidingView>
@@ -96,7 +111,7 @@ const styles = StyleSheet.create({
 
   form: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     paddingHorizontal: spacing.xl,
     paddingBottom: 30,
   },
@@ -115,7 +130,7 @@ const styles = StyleSheet.create({
   helper: {
     ...typeScale.caption,
     letterSpacing: 0,
-    textAlign: 'center',
+    textAlign: "center",
     color: palette.paper600,
     marginTop: spacing.md,
   },
@@ -126,7 +141,7 @@ const styles = StyleSheet.create({
   footer: {
     ...typeScale.body,
     fontSize: 13,
-    textAlign: 'center',
+    textAlign: "center",
     color: palette.paper400,
     marginTop: spacing.xl - 4,
     paddingTop: spacing.lg,

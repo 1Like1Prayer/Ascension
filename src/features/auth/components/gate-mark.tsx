@@ -1,19 +1,17 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { copy } from '@/i18n';
 import { components, effects, fonts, palette, radii, spacing, typeScale } from '@/theme';
 
-import { SealRings } from './seal-rings';
-
-/** The sect glyph — "martial". */
-const GLYPH = '武';
+import { LotusHalo } from './lotus-halo';
 
 /** Seal, wordmark, and halo. The identity block at the top of every auth screen. */
 export function GateMark({ title, eyebrow }: { title: string; eyebrow: string }) {
   return (
     <View style={styles.mark}>
-      <SealRings />
+      <LotusHalo />
       <View style={styles.seal}>
-        <Text style={styles.glyph}>{GLYPH}</Text>
+        <Text style={styles.glyph}>{copy.brand.glyph}</Text>
       </View>
       <Text style={styles.title}>{title}</Text>
       <Text style={typeScale.eyebrow}>{eyebrow}</Text>
