@@ -1,10 +1,5 @@
-import {
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Field } from "@/components/field";
@@ -36,9 +31,15 @@ export function LoginScreen() {
   return (
     <View style={components.screen}>
       <SafeAreaView style={styles.fill} edges={["top", "bottom"]}>
-        <KeyboardAvoidingView
+        <KeyboardAwareScrollView
           style={styles.fill}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          enableOnAndroid
+          enableResetScrollToCoords={false}
+          extraScrollHeight={24}
+          bounces={false}
         >
           <GateMark title={shared.brand.name} eyebrow={login.eyebrow} />
 
@@ -48,6 +49,7 @@ export function LoginScreen() {
                 label={login.fields.name}
                 value={credentials.name}
                 onChangeText={setName}
+                autoComplete="username"
                 textContentType="username"
                 returnKeyType="next"
               />
@@ -56,6 +58,7 @@ export function LoginScreen() {
                 value={credentials.mantra}
                 onChangeText={setMantra}
                 secureTextEntry={!revealed}
+                autoComplete="current-password"
                 textContentType="password"
                 returnKeyType="go"
                 onSubmitEditing={submit}
@@ -92,7 +95,10 @@ export function LoginScreen() {
               <Text style={styles.link}>{login.forgot.action}</Text>
             </Text>
 
-            <LabelledDivider label={login.providersDivider} style={styles.divider} />
+            <LabelledDivider
+              label={login.providersDivider}
+              style={styles.divider}
+            />
             <ProviderButtons onSelect={selectProvider} />
 
             <Text style={styles.footer}>
@@ -100,7 +106,7 @@ export function LoginScreen() {
               <Text style={styles.link}>{login.register.action}</Text>
             </Text>
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </View>
   );
@@ -108,12 +114,13 @@ export function LoginScreen() {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
+  scroll: { flexGrow: 1 },
 
   form: {
-    flex: 1,
-    justifyContent: "flex-end",
     paddingHorizontal: spacing.xl,
     paddingBottom: 30,
+    flex: 1,
+    justifyContent: "flex-end",
   },
   fields: { gap: spacing.sm + 2 },
   obscured: { letterSpacing: 3 },

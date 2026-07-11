@@ -1,38 +1,38 @@
 /** Copy for the login screen and the components only it renders. */
 export const login = {
   /** Eyebrow under the sect seal. */
-  eyebrow: 'The Gate of the Sect',
+  eyebrow: "Your next realm awaits",
 
   fields: {
-    name: 'DISCIPLE NAME',
-    mantra: 'SECRET MANTRA',
+    name: "USERNAME",
+    mantra: "PASSWORD",
   },
 
   /** Toggle inside the mantra field. Reads as the action, not the state. */
   reveal: {
-    show: 'SHOW',
-    hide: 'HIDE',
+    show: "SHOW",
+    hide: "HIDE",
   },
 
-  submit: 'Enter the Sect',
+  submit: "Log In",
 
   forgot: {
-    prompt: 'Forgot your mantra?',
-    action: 'Consult the elders',
+    prompt: "Forgot ",
+    action: "password?",
   },
 
   /** Divider above the third-party sign-in row. */
-  providersDivider: 'OR ARRIVE BY',
+  providersDivider: "OR CONTINUE WITH",
 
   register: {
-    prompt: 'No record in the annals?',
-    action: 'Begin initiation',
+    prompt: "Don't have an account?",
+    action: "Sign up",
   },
 
   /** Proper nouns, but still copy: a locale may transliterate them. */
   providers: {
-    apple: 'Apple',
-    google: 'Google',
+    apple: "Apple",
+    google: "Google",
   },
 
   a11y: {

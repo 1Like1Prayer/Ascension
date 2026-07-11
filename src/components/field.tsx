@@ -1,5 +1,12 @@
-import { useState, type ReactNode } from 'react';
-import { StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
+import { useRef, type ReactNode } from 'react';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  type TextInputProps,
+} from 'react-native';
 
 import { components, palette, spacing } from '@/theme';
 
@@ -13,25 +20,44 @@ type Props = TextInputProps & {
 };
 
 /**
- * Labelled text field. Owns its focus state so callers never thread it through;
- * focus lights the nano border, and only one field can hold it at a time.
+ * Labelled text field. Focus lights the nano border.
+ *
+ * The border is driven by `Animated`, not React state, and this is load-bearing:
+ * a state update in `onFocus` re-renders (commits) the TextInput subtree while it
+ * is focusing, which blurs it on Android's new architecture — the keyboard opens
+ * and immediately closes. Animating the wrapper updates its border without ever
+ * re-rendering the input, so focus holds.
  */
 export function Field({ label, trailing, style, onFocus, onBlur, ...input }: Props) {
-  const [focused, setFocused] = useState(false);
+  const focus = useRef(new Animated.Value(0)).current;
+
+  const animateFocus = (to: number) =>
+    Animated.timing(focus, {
+      toValue: to,
+      duration: 150,
+      // borderColor is not native-driver-able; but this never triggers a React
+      // re-render regardless, which is the whole point.
+      useNativeDriver: false,
+    }).start();
 
   const handleFocus = (e: FocusEvent) => {
-    setFocused(true);
+    animateFocus(1);
     onFocus?.(e);
   };
   const handleBlur = (e: BlurEvent) => {
-    setFocused(false);
+    animateFocus(0);
     onBlur?.(e);
   };
+
+  const borderColor = focus.interpolate({
+    inputRange: [0, 1],
+    outputRange: [palette.ink600, palette.nanoFocus],
+  });
 
   return (
     <View style={styles.field}>
       <Text style={components.fieldLabel}>{label}</Text>
-      <View style={[components.inputBox, focused && components.inputBoxFocused]}>
+      <Animated.View style={[components.inputBox, { borderColor }]}>
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -43,7 +69,7 @@ export function Field({ label, trailing, style, onFocus, onBlur, ...input }: Pro
           {...input}
         />
         {trailing}
-      </View>
+      </Animated.View>
     </View>
   );
 }
