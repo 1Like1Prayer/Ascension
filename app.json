@@ -34,7 +34,10 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-web-browser",
+      "@clerk/expo"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -45,6 +48,17 @@
       "eas": {
         "projectId": "676dc59e-f88b-41f3-9161-40ea3792d004"
       }
+    },
+    "build": {
+      "development": {
+        "developmentClient": true,
+        "distribution": "internal"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "preview": {},
+      "production": {}
     },
     "owner": "tomatoexpo"
   }

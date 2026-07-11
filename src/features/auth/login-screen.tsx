@@ -13,19 +13,27 @@ import { ProviderButtons, type Provider } from "./components/provider-buttons";
 import { useLoginForm } from "./hooks/use-login-form";
 
 export function LoginScreen() {
-  // TODO: pass an authenticate handler once a session layer exists.
   const {
-    credentials,
-    setName,
-    setMantra,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    code,
+    setCode,
     revealed,
     toggleReveal,
+    pendingVerification,
     canSubmit,
+    busy,
+    error,
     submit,
+    verify,
+    resendCode,
+    cancelVerification,
   } = useLoginForm();
 
   function selectProvider(_provider: Provider) {
-    // TODO: federated sign-in.
+    // TODO: browser SSO via useSSO() (works in Expo Go); native buttons need a dev build.
   }
 
   return (
@@ -43,69 +51,122 @@ export function LoginScreen() {
         >
           <GateMark title={shared.brand.name} eyebrow={login.eyebrow} />
 
-          <View style={styles.form}>
-            <View style={styles.fields}>
-              <Field
-                label={login.fields.name}
-                value={credentials.name}
-                onChangeText={setName}
-                autoComplete="username"
-                textContentType="username"
-                returnKeyType="next"
-              />
-              <Field
-                label={login.fields.mantra}
-                value={credentials.mantra}
-                onChangeText={setMantra}
-                secureTextEntry={!revealed}
-                autoComplete="current-password"
-                textContentType="password"
-                returnKeyType="go"
-                onSubmitEditing={submit}
-                style={!revealed && styles.obscured}
-                trailing={
-                  <PressableScale
-                    accessibilityRole="button"
-                    onPress={toggleReveal}
-                    hitSlop={10}
-                  >
-                    <Text style={styles.reveal}>
-                      {revealed ? login.reveal.hide : login.reveal.show}
-                    </Text>
-                  </PressableScale>
-                }
-              />
+          {pendingVerification ? (
+            <View style={styles.form}>
+              <Text style={styles.hint}>{login.verify.hint(email.trim())}</Text>
+
+              <View style={styles.fields}>
+                <Field
+                  label={login.verify.label}
+                  value={code}
+                  onChangeText={setCode}
+                  keyboardType="number-pad"
+                  autoComplete="one-time-code"
+                  textContentType="oneTimeCode"
+                  returnKeyType="go"
+                  onSubmitEditing={verify}
+                  maxLength={6}
+                />
+              </View>
+
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+              <PressableScale
+                accessibilityRole="button"
+                onPress={verify}
+                disabled={busy || code.trim().length === 0}
+                style={[
+                  components.buttonPrimary,
+                  styles.submit,
+                  (busy || code.trim().length === 0) && styles.submitIdle,
+                ]}
+              >
+                <Text style={components.buttonPrimaryText}>
+                  {login.verify.submit}
+                </Text>
+              </PressableScale>
+
+              <Text style={styles.helper}>
+                <Text style={styles.link} onPress={resendCode}>
+                  {login.verify.resend}
+                </Text>
+                {"   "}
+                <Text style={styles.link} onPress={cancelVerification}>
+                  {login.verify.back}
+                </Text>
+              </Text>
             </View>
+          ) : (
+            <View style={styles.form}>
+              <View style={styles.fields}>
+                <Field
+                  label={login.fields.name}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                  returnKeyType="next"
+                />
+                <Field
+                  label={login.fields.mantra}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!revealed}
+                  autoComplete="current-password"
+                  textContentType="password"
+                  returnKeyType="go"
+                  onSubmitEditing={submit}
+                  style={!revealed && styles.obscured}
+                  trailing={
+                    <PressableScale
+                      accessibilityRole="button"
+                      onPress={toggleReveal}
+                      hitSlop={10}
+                    >
+                      <Text style={styles.reveal}>
+                        {revealed ? login.reveal.hide : login.reveal.show}
+                      </Text>
+                    </PressableScale>
+                  }
+                />
+              </View>
 
-            <PressableScale
-              accessibilityRole="button"
-              onPress={submit}
-              disabled={!canSubmit}
-              style={[
-                components.buttonPrimary,
-                styles.submit,
-                !canSubmit && styles.submitIdle,
-              ]}
-            >
-              <Text style={components.buttonPrimaryText}>{login.submit}</Text>
-            </PressableScale>
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-            <Text style={styles.helper}>
-              {login.forgot.prompt}{" "}
-              <Text style={styles.link}>{login.forgot.action}</Text>
-            </Text>
+              <PressableScale
+                accessibilityRole="button"
+                onPress={submit}
+                disabled={!canSubmit || busy}
+                style={[
+                  components.buttonPrimary,
+                  styles.submit,
+                  (!canSubmit || busy) && styles.submitIdle,
+                ]}
+              >
+                <Text style={components.buttonPrimaryText}>{login.submit}</Text>
+              </PressableScale>
 
-            <LabelledDivider
-              label={login.providersDivider}
-              style={styles.divider}
-            />
-            <ProviderButtons onSelect={selectProvider} />
+              {/* Clerk bot protection mounts here for the sign-up path (Gate 10). */}
+              <View nativeID="clerk-captcha" />
 
-            <Text style={styles.footer}>
-              {login.register.prompt}{" "}
-              <Text style={styles.link}>{login.register.action}</Text>
-            </Text>
-          </View>
+              <Text style={styles.helper}>
+                {login.forgot.prompt}{" "}
+                <Text style={styles.link}>{login.forgot.action}</Text>
+              </Text>
+
+              <LabelledDivider
+                label={login.providersDivider}
+                style={styles.divider}
+              />
+              <ProviderButtons onSelect={selectProvider} />
+
+              <Text style={styles.footer}>
+                {login.register.prompt}{" "}
+                <Text style={styles.link}>{login.register.action}</Text>
+              </Text>
+            </View>
+          )}
         </KeyboardAwareScrollView>
       </SafeAreaView>
     </View>
@@ -129,6 +190,20 @@ const styles = StyleSheet.create({
     fontSize: 10.5,
     letterSpacing: 1,
     color: palette.nano400,
+  },
+
+  hint: {
+    ...typeScale.body,
+    fontSize: 14,
+    color: palette.paper400,
+    marginBottom: spacing.lg,
+  },
+
+  errorText: {
+    ...typeScale.caption,
+    letterSpacing: 0,
+    color: palette.danger,
+    marginTop: spacing.md,
   },
 
   submit: { marginTop: 18 },
