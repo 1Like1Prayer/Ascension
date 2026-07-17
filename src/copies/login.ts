@@ -34,8 +34,22 @@ export const login = {
   },
 
   forgot: {
+    // Link on the sign-in screen.
     prompt: "Forgot ",
     action: "password?",
+    // Reset flow, step 1: ask for the email.
+    request: {
+      hint: "Enter your email and we'll send a reset code.",
+      submit: "Send reset code",
+    },
+    // Reset flow, step 2: code + new password.
+    reset: {
+      codeLabel: "RESET CODE",
+      passwordLabel: "NEW PASSWORD",
+      hint: (email: string) => `Enter the code sent to ${email} and a new password.`,
+      submit: "Reset password",
+    },
+    back: "Back to sign in",
   },
 
   /** Divider above the third-party sign-in row. */
