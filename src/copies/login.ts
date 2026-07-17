@@ -4,7 +4,10 @@ export const login = {
   eyebrow: "Your next realm awaits",
 
   fields: {
-    name: "USERNAME",
+    // Clerk's default identifier is the email address; sign-in and sign-up both
+    // key off it. Switch to a username here only if you enable it in the Clerk
+    // dashboard (User & authentication → Username).
+    name: "EMAIL",
     mantra: "PASSWORD",
   },
 
@@ -16,9 +19,37 @@ export const login = {
 
   submit: "Log In",
 
+  /** Email-code step shown to a brand-new account after sign-up. */
+  verify: {
+    label: "VERIFICATION CODE",
+    hint: (email: string) => `We sent a 6-digit code to ${email}.`,
+    submit: "Verify email",
+    resend: "Resend code",
+    back: "Use a different email",
+  },
+
+  error: {
+    fallback: "Something went wrong. Please try again.",
+    unsupportedStep: "This account needs another step to sign in.",
+  },
+
   forgot: {
+    // Link on the sign-in screen.
     prompt: "Forgot ",
     action: "password?",
+    // Reset flow, step 1: ask for the email.
+    request: {
+      hint: "Enter your email and we'll send a reset code.",
+      submit: "Send reset code",
+    },
+    // Reset flow, step 2: code + new password.
+    reset: {
+      codeLabel: "RESET CODE",
+      passwordLabel: "NEW PASSWORD",
+      hint: (email: string) => `Enter the code sent to ${email} and a new password.`,
+      submit: "Reset password",
+    },
+    back: "Back to sign in",
   },
 
   /** Divider above the third-party sign-in row. */
